@@ -1,0 +1,40 @@
+name: Bug report
+description: Something in gh merge does not work.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: What happened, and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command and output
+      description: The exact command and what it printed. `--dry-run --json` output is the most useful. Remove anything private.
+      render: shell
+    validations:
+      required: true
+  - type: dropdown
+    id: how
+    attributes:
+      label: How was it run
+      options:
+        - By hand in a terminal
+        - By an AI coding agent (Claude Code, Codex, opencode…)
+        - In CI or a script
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      placeholder: "gh merge version, gh --version, OS"
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Repo settings that matter, like branch protection, merge queue or allowed merge methods.

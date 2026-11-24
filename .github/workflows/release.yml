@@ -1,0 +1,25 @@
+name: Release
+
+# Builds gh-merge for every platform gh supports and attaches the binaries to
+# a GitHub Release, so `gh extension install Gitguy268/gh-merge` gets a
+# precompiled binary.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: cli/gh-extension-precompile@v2
+        with:
+          go_version_file: go.mod
+          generate_attestations: true

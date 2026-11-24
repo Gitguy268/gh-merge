@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>gh merge: merge all open pull requests</title>
+<meta name="description" content="gh merge is a GitHub CLI extension that merges every open pull request GitHub can merge, in one repo or all of them. Works by hand and with AI coding agents. Free and open source (MIT).">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://gitguy268.github.io/gh-merge/">
+<meta property="og:title" content="gh merge: merge all open pull requests">
+<meta property="og:description" content="One command to merge every open pull request GitHub can merge, in one repo or all of them.">
+<meta property="og:url" content="https://gitguy268.github.io/gh-merge/">
+<meta property="og:image" content="https://gitguy268.github.io/gh-merge/docs/demo.gif">
+<style>
+:root {
+  --bg: #f7f7fa; --panel: #ffffff; --ink: #1d1f29; --muted: #5d6175; --line: #e2e3ea;
+  --accent: #2f8a3b; --accent-ink: #ffffff; --term: #1e1e2e; --term-ink: #cdd6f4;
+  --shadow: 0 1px 2px rgba(20,20,40,.06), 0 8px 24px rgba(20,20,40,.06);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14151c; --panel: #1c1e28; --ink: #e8e9f1; --muted: #a2a5b8; --line: #2b2d3b;
+    --accent: #8fd68f; --accent-ink: #10220f; --term: #11111b;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14151c; --panel: #1c1e28; --ink: #e8e9f1; --muted: #a2a5b8; --line: #2b2d3b;
+  --accent: #8fd68f; --accent-ink: #10220f; --term: #11111b;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: inherit; text-underline-offset: 3px; }
+code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace; font-size: .92em; }
+.wrap { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
+header.top { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
+.brand { display: flex; gap: 10px; align-items: center; font-weight: 700; font-size: 19px; text-decoration: none; }
+.brand img { width: 28px; height: 28px; }
+nav { display: flex; gap: 16px; align-items: center; font-size: 15px; }
+nav a { color: var(--muted); text-decoration: none; }
+nav a:hover { color: var(--ink); }
+.toggle { border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 999px; padding: 3px 10px; font: inherit; font-size: 14px; cursor: pointer; }
+.hero { padding: 36px 0 28px; }
+.hero h1 { font-size: clamp(34px, 6vw, 54px); line-height: 1.08; margin: 0 0 14px; letter-spacing: -0.02em; }
+.hero p { font-size: 19px; color: var(--muted); margin: 0 0 22px; max-width: 38em; }
+.install { display: flex; align-items: center; gap: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; max-width: 34em; box-shadow: var(--shadow); }
+.install code { flex: 1; overflow-x: auto; white-space: nowrap; }
+.copy { border: 0; background: var(--accent); color: var(--accent-ink); border-radius: 8px; padding: 5px 12px; cursor: pointer; font: inherit; font-size: 14px; font-weight: 600; }
+.copy:focus-visible, .toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.demo { margin: 34px 0 10px; background: var(--term); border-radius: 16px; padding: 10px; box-shadow: var(--shadow); }
+.demo img { display: block; width: 100%; height: auto; border-radius: 10px; }
+section { padding: 40px 0; border-top: 1px solid var(--line); }
+section h2 { font-size: 27px; margin: 0 0 18px; letter-spacing: -0.01em; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; box-shadow: var(--shadow); }
+.card h3 { margin: 0 0 6px; font-size: 17px; }
+.card p { margin: 0; color: var(--muted); font-size: 15px; }
+pre { background: var(--term); color: var(--term-ink); border-radius: 12px; padding: 16px 18px; overflow-x: auto; line-height: 1.55; margin: 0; }
+pre .c { color: #7f849c; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+td { border-top: 1px solid var(--line); padding: 8px 10px 8px 0; vertical-align: top; }
+td:first-child { white-space: nowrap; }
+footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 14px; }
+@media (max-width: 760px) {
+  .grid { grid-template-columns: 1fr; }
+  nav a.hide-sm { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="./"><img src="favicon.svg" alt="">gh merge</a>
+    <nav>
+      <a class="hide-sm" href="#use">Use</a>
+      <a class="hide-sm" href="#agents">AI agents</a>
+      <a href="https://github.com/Gitguy268/gh-merge">GitHub</a>
+      <button class="toggle" id="theme" type="button" aria-label="Switch colour theme">◐</button>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>Merge all your open pull requests with one command.</h1>
+      <p>gh merge is an extension for the GitHub CLI. It lists the open pull requests in a repo, or in every repo you own, shows you the plan, and merges whatever GitHub can merge. Drafts and conflicts are skipped. CI status is ignored.</p>
+      <div class="install">
+        <code id="cmd">gh extension install Gitguy268/gh-merge</code>
+        <button class="copy" type="button" data-copy="cmd">Copy</button>
+      </div>
+    </div>
+
+    <div class="demo">
+      <img src="docs/demo.gif" width="1280" height="720" alt="A terminal: gh merge --dry-run lists four pull requests, then gh merge --all asks to merge six pull requests in three repos and merges them one by one, skipping a draft and one that now conflicts.">
+    </div>
+
+    <section id="use">
+      <h2>Use</h2>
+      <pre><span class="c"># what would happen in the repo in this folder</span>
+gh merge --dry-run
+
+<span class="c"># show the list, ask, then merge</span>
+gh merge
+
+<span class="c"># every repo you own, only Dependabot, and ask it to rebase conflicts</span>
+gh merge --all --author app/dependabot --rebase-dependabot
+
+<span class="c"># can't merge yet? turn on auto-merge instead</span>
+gh merge --auto</pre>
+    </section>
+
+    <section>
+      <h2>What it does</h2>
+      <div class="grid">
+        <div class="card"><h3>One repo or all of them</h3><p>The repo you're in, <code>-R owner/name</code>, every repo you own with <code>--all</code>, or an org with <code>--owner</code>. Archived repos are skipped.</p></div>
+        <div class="card"><h3>One at a time</h3><p>After each merge it checks the next pull request again, because merging one often puts the next into conflict.</p></div>
+        <div class="card"><h3>Your repo's rules</h3><p>It uses the merge method your repo allows, unless you pick one. Branch protection still applies, and <code>--auto</code> turns on auto-merge instead.</p></div>
+      </div>
+    </section>
+
+    <section id="agents">
+      <h2>With or without an AI coding agent</h2>
+      <p>Run it yourself, or let Claude Code, Codex, opencode or another agent run it. When there's no terminal it never asks a question: without <code>--yes</code> it prints the plan and exits with code 2. <code>--json</code> gives a result for every pull request.</p>
+      <pre><span class="c"># teach your agents the tool (Claude Code, Codex, opencode, ~/.agents)</span>
+gh merge install-skill
+
+<span class="c"># what the skill tells them: preview, ask you, then merge</span>
+gh merge --all --dry-run --json
+gh merge --all --yes --json</pre>
+      <table>
+        <tr><td><code>0</code></td><td>done, or nothing to do</td></tr>
+        <tr><td><code>1</code></td><td>error</td></tr>
+        <tr><td><code>2</code></td><td>nothing merged: not confirmed</td></tr>
+        <tr><td><code>3</code></td><td>some pull requests were skipped or failed (drafts don't count)</td></tr>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    MIT licensed. Made by Lucas Van De Weerd. Not affiliated with GitHub.
+    <a href="https://github.com/Gitguy268/gh-merge">Source</a> ·
+    <a href="https://github.com/Gitguy268/gh-merge/blob/main/README.md">Docs</a> ·
+    <a href="llms.txt">llms.txt</a>
+  </footer>
+</div>
+<script>
+(function () {
+  var root = document.documentElement, btn = document.getElementById('theme');
+  try { var saved = localStorage.getItem('theme'); if (saved) root.setAttribute('data-theme', saved); } catch (e) {}
+  btn.addEventListener('click', function () {
+    var dark = root.getAttribute('data-theme') === 'dark' ||
+      (!root.getAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
+    var next = dark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+  });
+  document.querySelectorAll('[data-copy]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var text = document.getElementById(b.dataset.copy).textContent;
+      (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(function () {
+        b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 1500);
+      }, function () {});
+    });
+  });
+})();
+</script>
+</body>
+</html>

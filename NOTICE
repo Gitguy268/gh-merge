@@ -1,0 +1,33 @@
+gh-merge
+Copyright (c) 2026 Lucas Van De Weerd. Licensed under the MIT License (see LICENSE).
+
+gh-merge is an extension for the GitHub CLI. It is not affiliated with or
+endorsed by GitHub. "GitHub" is a trademark of GitHub, Inc.
+
+The MIT grant covers gh-merge's own code only. gh-merge is built with the Go
+modules below, each under its own licence (see go.mod for exact versions).
+
+- go-gh, safeexec and shurcooL-graphql, Copyright (c) GitHub Inc.
+  go-gh and shurcooL-graphql: MIT License. safeexec: BSD 2-Clause License.
+  https://github.com/cli
+- httpretty, Copyright (c) Henrique Vicente. MIT License.
+  https://github.com/henvic/httpretty
+- go-osc52, Copyright (c) Ayman Bagabas. MIT License.
+  https://github.com/aymanbagabas/go-osc52
+- termenv, Copyright (c) Christian Muehlhaeuser. MIT License.
+  https://github.com/muesli/termenv
+- go-colorful, Copyright (c) 2013 Lucas Beyer. MIT License.
+  https://github.com/lucasb-eyer/go-colorful
+- go-isatty, Copyright (c) Yasuhiro Matsumoto. MIT License.
+  https://github.com/mattn/go-isatty
+- uniseg, Copyright (c) 2019 Oliver Kuederle. MIT License.
+  https://github.com/rivo/uniseg
+- go-timezone-local. The Unlicense (public domain).
+  https://github.com/thlib/go-timezone-local
+- yaml.v3, Copyright (c) Canonical Ltd. and the go-yaml authors. MIT License
+  and Apache License 2.0. https://github.com/go-yaml/yaml
+- golang.org/x/sys, golang.org/x/term and golang.org/x/text, Copyright 2009
+  The Go Authors. BSD 3-Clause License. https://go.googlesource.com
+
+The release workflow uses cli/gh-extension-precompile (MIT License,
+Copyright (c) GitHub Inc.) to build the binaries.

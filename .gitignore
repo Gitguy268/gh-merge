@@ -1,0 +1,7 @@
+/gh-merge
+/gh-merge.exe
+/dist/
+*.test
+*.out
+.DS_Store
+._*

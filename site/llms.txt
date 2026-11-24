@@ -1,0 +1,23 @@
+# gh merge
+
+> gh merge is a GitHub CLI extension that merges every open pull request GitHub can merge, in the current repo, one repo (-R), every repo you own (--all) or every repo of a user or org (--owner). It skips drafts and conflicts and ignores CI status. It is safe for AI coding agents: it never prompts without a terminal, needs --yes to merge non-interactively, has --dry-run and --json, and documented exit codes. MIT licensed, written in Go.
+
+## Install
+
+- gh: `gh extension install Gitguy268/gh-merge`
+- Homebrew: `brew install gitguy268/tap/gh-merge` (run `brew trust gitguy268/tap` first on new Homebrew); this gives the `gh-merge` command with the same flags
+- Go: `go install github.com/Gitguy268/gh-merge@latest` (also `gh-merge`)
+
+## Use
+
+- Preview: `gh merge --dry-run --json` (add `--all`, `--owner NAME` or `-R owner/name`)
+- Merge after the user agrees: same command with `--yes`
+- Exit codes: 0 done, 1 error, 2 not confirmed, 3 some PRs skipped or failed
+- Agent skill: `gh merge install-skill` (Claude Code, Codex, opencode, ~/.agents)
+
+## Docs
+
+- [README](https://github.com/Gitguy268/gh-merge/blob/main/README.md): flags, how it decides, JSON output
+- [AGENTS.md](https://github.com/Gitguy268/gh-merge/blob/main/AGENTS.md): rules for AI coding agents
+- [SKILL.md](https://github.com/Gitguy268/gh-merge/blob/main/internal/skill/SKILL.md)
+- [Changelog](https://github.com/Gitguy268/gh-merge/blob/main/CHANGELOG.md)

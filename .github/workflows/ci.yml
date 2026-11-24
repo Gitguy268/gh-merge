@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: gofmt
+        shell: bash
+        run: test -z "$(gofmt -l .)" || { gofmt -l .; exit 1; }
+
+      - run: go vet ./... && go vet -tags demo ./...
+
+      - run: go test -race ./...
+
+      - name: Build
+        shell: bash
+        run: CGO_ENABLED=0 go build -trimpath -o gh-merge$(go env GOEXE) .
+
+      - name: Smoke test (no network)
+        shell: bash
+        run: |
+          ./gh-merge$(go env GOEXE) --help | grep -q "gh merge --all"
+          ./gh-merge$(go env GOEXE) install-skill --print | head -2 | grep -q "name: gh-merge"
+          # Bad flags must fail before any API call.
+          if ./gh-merge$(go env GOEXE) --all --owner x; then exit 1; fi
+
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check links in the docs
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --no-progress --exclude 'github.com/Gitguy268/gh-merge/(releases|security|issues)' --exclude 'gitguy268.github.io/gh-merge' README.md AGENTS.md CONTRIBUTING.md SECURITY.md CHANGELOG.md site/index.html
+          fail: true
